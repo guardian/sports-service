@@ -9,8 +9,7 @@ class PAEventAPI(
 
   // I'm guessing PA's webhook is expecting a POST endpoint
   post("/") {
-    paEventService.handleEvent(request.body)
-    println("POST", request.body)
+    paEventService.handleEvent(parse(request.body))
     Ok()
   }
 }

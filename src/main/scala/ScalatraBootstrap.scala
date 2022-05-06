@@ -6,7 +6,11 @@ import javax.servlet.ServletContext
 
 class ScalatraBootstrap extends LifeCycle {
   override def init(context: ServletContext) {
-    context.mount(new PAEventAPI(new PAEventService), "/sports-event/*")
+    val paEventAPI = new PAEventAPI(
+      new PAEventService
+    )
+
+    context.mount(paEventAPI, "/sports-event/*")
     context.mount(new StatusAPI, "/status/*")
   }
 }
