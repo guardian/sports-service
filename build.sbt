@@ -16,6 +16,8 @@ lazy val hello = (project in file("."))
       "javax.servlet" % "javax.servlet-api" % "3.1.0" % "provided",
       "org.scalatra" %% "scalatra-json" % "2.8.2",
       "org.json4s" %% "json4s-jackson" % "4.0.5",
+      "org.dispatchhttp" %% "dispatch-core" % "1.2.0",
+      "com.amazonaws" % "aws-java-sdk-s3" % "1.12.226",
     ),
   )
 

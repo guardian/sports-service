@@ -4,32 +4,50 @@ import com.gu.sports.model.PANotification
 import org.json4s.DefaultFormats
 import org.json4s.JsonAST.JValue
 import org.json4s.jackson.JsonMethods._
+
 import scala.io.Source.fromURL
+import dispatch._
+import Defaults._
+import com.gu.sports.dataaccess.{PAClient, S3Client}
+import com.gu.sports.util.Configuration
 
 import scala.concurrent.Future
+import scala.util.{Failure, Success, Try}
 
 trait PAEventService {
   implicit val formats = DefaultFormats
 
+  val paClient: PAClient
+  val s3Client: S3Client
+
+  // define some remote configuration to get the apikey?
+//  val configuration: Configuration
+
   def handleEvent(event: JValue): Future[Unit] = {
-    // parse
-    val paNotification = parseEvent(event)
+     for {
+       paNotification <- parseEvent(event)
+       response <- paClient.get(paNotification.url, Configuration.apiKey)
+       responseBody = response.getResponseBody()
+       _ <- s3Client.put(responseBody, "path")
+     } yield {
+       // something/nothing
+     }
+    // parse - do we care about parsing the response in this component? part 2
 
-    // call url
-    // what happens if timeout - maybe wrap in a future
-    val fullEvent = fromURL(paNotification.url).mkString
-
-    // receive full event data - what do we get?
-    // parse/translate event data (make event storable)
-    // pass to database layer/s3
     Future.successful()
   }
 
-  private def parseEvent(event: JValue): PANotification = {
-    event.extract[PANotification]
+  private def parseEvent(event: JValue): Future[PANotification] = {
+    Try {
+      event.extract[PANotification]
+    } match {
+      case Success(paNotif) => Future.successful(paNotif)
+      case Failure(e) => Future.failed(e)
+    }
   }
 }
 
 object PAEventService extends PAEventService {
-
+  val paClient = PAClient
+  val s3Client = S3Client
 }

@@ -2,7 +2,7 @@
   "operation": "update",
   "timestamp": "2016-01-19T09:32:55Z",
   "type": "event",
-  "url": "http://sport.api.press.net/v1/event/2112825?ts=1453195816",
+  "url": "https://e5ddbf81-9bb2-4a8c-ac98-8d47bf007acd.mock.pstmn.io/v1/event/12345",
   "event": {
     "id": 2112825,
     "name": "Roger vs Tim",

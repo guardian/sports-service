@@ -19,6 +19,7 @@ trait PAEventAPI extends BaseAPI {
         paEventService.handleEvent(event).map(
           result => Ok(result)
         )
+//          .recover()
 
       case badThing =>
         println(badThing)
