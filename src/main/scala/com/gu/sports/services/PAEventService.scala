@@ -28,7 +28,8 @@ trait PAEventService {
        paNotification <- parseEvent(event)
        response <- paClient.get(paNotification.url, Configuration.apiKey)
        responseBody = response.getResponseBody()
-       _ <- s3Client.put(responseBody, "path")
+       path = getPath(paNotification)
+       _ <- s3Client.put(responseBody, path)
      } yield {
        // something/nothing
      }
@@ -45,6 +46,9 @@ trait PAEventService {
       case Failure(e) => Future.failed(e)
     }
   }
+
+  private def getPath(notif: PANotification): String =
+    s"${notif.`type`}/${notif.event.id}-${notif.timestamp}.json"
 }
 
 object PAEventService extends PAEventService {

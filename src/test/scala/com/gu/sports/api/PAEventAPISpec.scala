@@ -23,21 +23,21 @@ class PAEventAPISpec extends ScalatraFunSuite with BeforeAndAfterEach {
 
   override def beforeEach() { reset(paEventServiceMock) }
 
-  test("POST /sports-event should return status 200") {
+  test("POST /sports-event should return status 201") {
     when(paEventServiceMock.handleEvent(any[JValue])).thenReturn(Future.successful())
 
     post("/sports-event", jsonString) {
       verify(paEventServiceMock, times(1)).handleEvent(parse(jsonString))
-      status should equal (200)
+      status should equal (201)
     }
   }
 
-  test("POST /sports-event should return status 200 even if handleEvent fails") {
+  test("POST /sports-event should return status 201 even if handleEvent fails") {
     when(paEventServiceMock.handleEvent(any[JValue])).thenReturn(Future.failed(new Exception("Bad")))
 
     post("/sports-event", jsonString) {
       verify(paEventServiceMock, times(1)).handleEvent(parse(jsonString))
-      status should equal (200)
+      status should equal (201)
     }
   }
 

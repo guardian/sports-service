@@ -1,29 +1,29 @@
 package com.gu.sports.api
 
 import com.gu.sports.services.PAEventService
-import org.scalatra.{BadRequest, Ok}
+import org.scalatra.{AsyncResult, BadRequest, Created, FutureSupport}
 
 import java.util.logging.Logger
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
-trait PAEventAPI extends BaseAPI {
+trait PAEventAPI extends BaseAPI with FutureSupport {
 
   val paEventService: PAEventService
 
   // I'm guessing PA's webhook is expecting a POST endpoint
   post("/") {
-    println(request.body)
-    parseOpt(request.body) match {
-      case Some(event) =>
-        log(s"Handling event: $event")
-        paEventService.handleEvent(event).map(
-          result => Ok(result)
-        )
-//          .recover()
-
-      case badThing =>
-        println(badThing)
-        BadRequest("json format expected")
+    new AsyncResult {
+      override val is =
+        parseOpt(request.body) match {
+          case Some(event) =>
+            println(s"Handling event: $event")
+            paEventService.handleEvent(event).map(
+              _ => Created(())
+            )
+          case badThing =>
+            println(badThing, "bad request")
+            Future.successful(BadRequest("""{"error":"json format expected"}"""))
+        }
     }
   }
 }
