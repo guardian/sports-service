@@ -4,9 +4,11 @@ import com.gu.sports.services.PAEventService
 import org.scalatra.{AsyncResult, BadRequest, Created, FutureSupport}
 
 import java.util.logging.Logger
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait PAEventAPI extends BaseAPI with FutureSupport {
+
+  protected implicit def executor: ExecutionContext = ExecutionContext.global
 
   val paEventService: PAEventService
 
